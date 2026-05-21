@@ -44,7 +44,6 @@ const xerberusReportUrl = (type: XerberusEntityType, id: string) => {
 export default function RatingsPage() {
 	const { data, loading, error } = useRatings({
 		types: Array.from(new Set(RATING_CARDS.map((c) => c.type))),
-		ids: RATING_CARDS.map((c) => c.id),
 	});
 
 	const byKey = new Map(data.map((r) => [`${r.type}:${r.id}`, r]));

@@ -3,8 +3,6 @@ import type { XerberusEntityType, XerberusRating } from "../pages/api/ratings/li
 
 type Args = {
 	types?: XerberusEntityType[];
-	ids?: string[];
-	active?: boolean;
 };
 
 type Result = {
@@ -13,7 +11,7 @@ type Result = {
 	error: string | null;
 };
 
-export function useRatings({ types, ids, active }: Args): Result {
+export function useRatings({ types }: Args): Result {
 	const [data, setData] = useState<XerberusRating[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
@@ -21,10 +19,8 @@ export function useRatings({ types, ids, active }: Args): Result {
 	const query = useMemo(() => {
 		const params = new URLSearchParams();
 		if (types && types.length > 0) params.set("type", types.join(","));
-		if (ids && ids.length > 0) params.set("ids", ids.join(","));
-		if (active !== undefined) params.set("active", String(active));
 		return params.toString();
-	}, [types, ids, active]);
+	}, [types]);
 
 	useEffect(() => {
 		const controller = new AbortController();

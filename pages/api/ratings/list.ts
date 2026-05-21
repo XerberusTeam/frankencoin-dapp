@@ -7,7 +7,6 @@ export type XerberusRating = {
 	id: string;
 	name: string;
 	score: number | null;
-	logo_url: string | null;
 	platform: string | null;
 	address: string | null;
 };
@@ -16,7 +15,6 @@ type SuccessBody = { status: "success"; data: XerberusRating[] };
 type ErrorBody = { status: "error"; message: string };
 
 const ALLOWED_TYPES: XerberusEntityType[] = ["pool", "protocol", "organisation", "asset"];
-const ID_REGEX = /^[A-Za-z0-9_.-]+$/;
 
 const parseCsv = (raw: unknown): string[] | undefined => {
 	if (typeof raw !== "string" || raw.length === 0) return undefined;
@@ -41,14 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 		});
 	}
 
-	const ids = parseCsv(req.query.ids);
-	if (ids && ids.some((id) => !ID_REGEX.test(id))) {
-		return res.status(400).json({
-			status: "error",
-			message: "ids must be a comma-separated list of [A-Za-z0-9_.-] identifiers",
-		});
-	}
-
 	const baseUrl = process.env.XERBERUS_API_URL;
 	const apiKey = process.env.XERBERUS_API_KEY;
 	const userEmail = process.env.XERBERUS_USER_EMAIL;
@@ -62,8 +52,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
 	const params = new URLSearchParams();
 	if (types) params.set("type", types.join(","));
-	if (ids) params.set("ids", ids.join(","));
-	if (typeof req.query.active === "string") params.set("active", req.query.active);
 
 	const upstreamUrl = `${baseUrl.replace(/\/$/, "")}/registry/scores${params.toString() ? `?${params.toString()}` : ""}`;
 
