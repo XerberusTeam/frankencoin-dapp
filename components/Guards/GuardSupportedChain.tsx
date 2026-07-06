@@ -4,13 +4,13 @@ import { useAppKit, useAppKitState, useAppKitNetwork } from "@reown/appkit/react
 import AppButton from "@components/AppButton";
 import { WAGMI_CHAIN, WAGMI_CHAINS } from "../../app.config";
 import { AppKitNetwork } from "@reown/appkit/networks";
-import { ChainId } from "@frankencoin/zchf";
+import { ChainId, SupportedChain } from "@frankencoin/zchf";
 
 interface Props {
 	children?: React.ReactNode;
 	label?: string;
 	disabled?: boolean;
-	chain?: AppKitNetwork;
+	chain?: AppKitNetwork | SupportedChain;
 	chainId?: ChainId;
 }
 
@@ -44,7 +44,7 @@ export default function GuardSupportedChain({ children, label, disabled, chain, 
 	// Check if wallet is disconnected
 	if (Account.isDisconnected)
 		return (
-<AppButton
+			<AppButton
 				disabled={disabled}
 				onClick={() => {
 					AppKit.open();
@@ -58,10 +58,10 @@ export default function GuardSupportedChain({ children, label, disabled, chain, 
 	// Check if wallet is connected to the correct chains
 	if (!isCorrectChain)
 		return (
-<AppButton
+			<AppButton
 				disabled={disabled}
 				onClick={() => {
-					AppKitNetwork.switchNetwork(chain);
+					AppKitNetwork.switchNetwork(chain as AppKitNetwork);
 					setRequestedChange(true);
 				}}
 			>
